@@ -33,7 +33,7 @@ namespace OpenXcom
 RuleItem::RuleItem(const std::string &type) : _type(type), _name(type), _size(0.0), _costBuy(0), _costSell(0), _transferTime(24), _weight(3), _bigSprite(-1), _floorSprite(-1), _handSprite(120), _bulletSprite(-1), _fireSound(-1), _hitSound(-1), _hitAnimation(-1), _power(0), _damageType(DT_NONE),
 											_accuracyAuto(0), _accuracySnap(0), _accuracyAimed(0), _tuAuto(0), _tuSnap(0), _tuAimed(0), _clipSize(0), _accuracyMelee(0), _tuMelee(0), _battleType(BT_NONE), _twoHanded(false), _fixedWeapon(false), _waypoints(0), _invWidth(1), _invHeight(1),
 											_painKiller(0), _heal(0), _stimulant(0), _woundRecovery(0), _healthRecovery(0), _stunRecovery(0), _energyRecovery(0), _tuUse(0), _recoveryPoints(0), _armor(20), _turretType(-1), _recover(true), _ignoreInBaseDefense(false), _liveAlien(false), _blastRadius(-1), _attraction(0),
-											_flatRate(false), _arcingShot(false), _listOrder(0), _maxRange(200), _aimRange(200), _snapRange(15), _autoRange(7), _minRange(0), _dropoff(2), _bulletSpeed(0), _explosionSpeed(0), _autoShots(3), _shotgunPellets(0), _strengthApplied(false), _skillApplied(true),
+											_flatRate(false), _arcingShot(false), _listOrder(0), _maxRange(200), _aimRange(200), _snapRange(15), _autoRange(7), _minRange(0), _dropoff(2), _ignoresCover(true), _bulletSpeed(0), _explosionSpeed(0), _autoShots(3), _shotgunPellets(0), _strengthApplied(false), _skillApplied(true),
 											_LOSRequired(false), _underwaterOnly(false), _landOnly(false), _meleeSound(39), _meleePower(0), _meleeAnimation(0), _meleeHitSound(-1), _specialType(-1), _vaporColor(-1), _vaporDensity(0), _vaporProbability(15)
 {
 }
@@ -122,6 +122,7 @@ void RuleItem::load(const YAML::Node &node, Mod *mod, int listOrder)
 	_autoRange = node["autoRange"].as<int>(_autoRange);
 	_minRange = node["minRange"].as<int>(_minRange);
 	_dropoff = node["dropoff"].as<int>(_dropoff);
+  _ignoresCover = node["ignoresCover"].as<bool>(_ignoresCover);
 	_bulletSpeed = node["bulletSpeed"].as<int>(_bulletSpeed);
 	_explosionSpeed = node["explosionSpeed"].as<int>(_explosionSpeed);
 	_autoShots = node["autoShots"].as<int>(_autoShots);
@@ -256,6 +257,7 @@ bool RuleItem::isTwoHanded() const
 {
 	return _twoHanded;
 }
+ 
 
 /**
  * Returns whether this item uses waypoints.
@@ -717,6 +719,15 @@ int RuleItem::getMinRange() const
 int RuleItem::getDropoff() const
 {
 	return _dropoff;
+}
+
+/**
+ * Returns whether this weapon ignores light cover.
+ * @return True if it ignores light cover.
+ */
+bool RuleItem::ignoresCover() const
+{
+	return _ignoresCover;
 }
 
 /**

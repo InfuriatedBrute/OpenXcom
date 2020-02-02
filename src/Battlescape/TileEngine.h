@@ -106,6 +106,10 @@ public:
 	bool validMeleeRange(const Position& pos, int direction, BattleUnit *attacker, BattleUnit *target, Position *dest, bool preferEnemy = true);
 	/// Gets the AI to look through a window.
 	int faceWindow(Position position);
+  /// Gets the cover value for a certain tile, in a certain direction
+  int getDirectionalCoverValue(Position position, int direction);
+  /// Converts a position to a direction.
+  int getRelativeDirection(Position relative);
 	/// Checks a unit's % exposure on a tile.
 	int checkVoxelExposure(Position *originVoxel, Tile *tile, BattleUnit *excludeUnit, BattleUnit *excludeAllBut);
 	/// Checks validity for targetting a unit.

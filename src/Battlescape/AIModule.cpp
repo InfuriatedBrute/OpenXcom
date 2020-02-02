@@ -885,13 +885,15 @@ void AIModule::setupEscape()
 
 			if (_spottingEnemies || spotters)
 			{
-				if (_spottingEnemies <= spotters)
+        //enemies for which we have cover against are less of a threat
+        double threats = getSpottingUnits(unit->getPosition(), action->actor->getRules()->takesCover());
+				if (threats <= spotters)
 				{
-					score -= (1 + spotters - _spottingEnemies) * EXPOSURE_PENALTY; // that's for giving away our position
+					score -= (1 + spotters - threats) * EXPOSURE_PENALTY; // that's for giving away our position
 				}
 				else
 				{
-					score += (_spottingEnemies - spotters) * EXPOSURE_PENALTY;
+					score += (threats - spotters) * EXPOSURE_PENALTY;
 				}
 			}
 			if (tile->getFire())
@@ -987,11 +989,11 @@ int AIModule::countKnownTargets() const
  * @param pos the Position to check for spotters.
  * @return spotters.
  */
-int AIModule::getSpottingUnits(const Position& pos) const
+double AIModule::getSpottingUnits(const Position& pos, bool considerCover = false) const
 {
 	// if we don't actually occupy the position being checked, we need to do a virtual LOF check.
 	bool checking = pos != _unit->getPosition();
-	int tally = 0;
+	double tally = 0;
 	for (std::vector<BattleUnit*>::const_iterator i = _save->getUnits()->begin(); i != _save->getUnits()->end(); ++i)
 	{
 		if (validTarget(*i, false, false))
@@ -1001,18 +1003,26 @@ int AIModule::getSpottingUnits(const Position& pos) const
 			Position originVoxel = _save->getTileEngine()->getSightOriginVoxel(*i);
 			originVoxel.z -= 2;
 			Position targetVoxel;
+      tallyup = [](){
+        if(considerCover){
+          int dir = _save->getTileEngine()->getRelativeDirection(&originVoxel, &targetVoxel));
+          tally += (1.0 - getDirectionalCoverValue(&targetVoxel, dir) / 100.0);
+        }else{
+          tally++;
+        }
+      }
 			if (checking)
 			{
 				if (_save->getTileEngine()->canTargetUnit(&originVoxel, _save->getTile(pos), &targetVoxel, *i, false, _unit))
 				{
-					tally++;
+          tallyup();
 				}
 			}
 			else
 			{
 				if (_save->getTileEngine()->canTargetUnit(&originVoxel, _save->getTile(pos), &targetVoxel, *i, false))
 				{
-					tally++;
+					tallyup();
 				}
 			}
 		}
@@ -1451,10 +1461,17 @@ bool AIModule::findFirePoint()
 			{
 				score = BASE_SYSTEMATIC_SUCCESS - getSpottingUnits(pos) * 10;
 				score += _unit->getTimeUnits() - _save->getPathfinding()->getTotalTUCost();
+        
 				if (!_aggroTarget->checkViewSector(pos))
 				{
 					score += 10;
 				}
+        //reduce score based on cover
+        if(!action->weapon->getRules()->ignoresCover() && _aggroTarget->getRules()->takesCover()){
+          int dir = _save->getTileEngine()->getRelativeDirection(pos - target));
+          score -= getDirectionalCoverValue(target, dir) * 0.75;
+          score += 10; //compensate slightly so fastpass still occurs sometimes
+        }
 				if (score > bestScore)
 				{
 					bestScore = score;

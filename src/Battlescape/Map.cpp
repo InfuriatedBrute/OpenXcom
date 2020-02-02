@@ -994,7 +994,9 @@ void Map::drawTerrain(Surface *surface)
 								BattleAction *action = _save->getBattleGame()->getCurrentAction();
 								RuleItem *weapon = action->weapon->getRules();
 								int accuracy = action->actor->getFiringAccuracy(action->type, action->weapon);
-								int distance = _save->getTileEngine()->distance(Position (itX, itY,itZ), action->actor->getPosition());
+                Position itPosition = Position (itX, itY,itZ);
+                Position myPosition = action->actor->getPosition();
+								int distance = _save->getTileEngine()->distance(itPosition, myPosition);
 								int upperLimit = 200;
 								int lowerLimit = weapon->getMinRange();
 								switch (action->type)
@@ -1046,6 +1048,11 @@ void Map::drawTerrain(Surface *surface)
 										outOfRange = false;
 									}
 								}
+                //reduce displayed hit chance based on cover
+                if(!weapon->getRules()->ignoresCover()){
+                  int dir = _save->getTileEngine()->getRelativeDirection(myPosition - itPosition));
+                  accuracy = round(accuracy * (1.0 - getDirectionalCoverValue(itPosition, dir) / 100.0));
+                }
 								// zero accuracy or out of range: set it red.
 								if (accuracy <= 0 || outOfRange)
 								{

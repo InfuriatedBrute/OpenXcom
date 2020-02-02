@@ -66,7 +66,7 @@ Projectile::Projectile(Mod *mod, SavedBattleGame *save, BattleAction action, Pos
 				_vaporDensity = ammo->getRules()->getVaporDensity();
 				_vaporProbability = ammo->getRules()->getVaporProbability();
 				_speed = std::max(1, _speed + ammo->getRules()->getBulletSpeed());
-			}
+      }
 
 			// no ammo, or the ammo didn't contain the info we wanted, see what the weapon has on offer.
 			if (_bulletSprite == -1)

@@ -65,7 +65,7 @@ private:
 	bool _flatRate, _arcingShot;
 	int _listOrder, _maxRange, _aimRange, _snapRange, _autoRange, _minRange, _dropoff, _bulletSpeed, _explosionSpeed, _autoShots, _shotgunPellets;
 	std::string _zombieUnit;
-	bool _strengthApplied, _skillApplied, _LOSRequired, _underwaterOnly, _landOnly;
+	bool _strengthApplied, _skillApplied, _LOSRequired, _underwaterOnly, _landOnly, _ignoresCover;
 	int _meleeSound, _meleePower, _meleeAnimation, _meleeHitSound, _specialType, _vaporColor, _vaporDensity, _vaporProbability;
 public:
 	/// Creates a blank item ruleset.
@@ -190,6 +190,8 @@ public:
 	bool isRifle() const;
 	/// is this item a single handed weapon?
 	bool isPistol() const;
+  /// Does this weapon ignore cover?
+  bool ignoresCover() const;
 	/// Get the max range of this weapon.
 	int getMaxRange() const;
 	/// Get the max range of aimed shots with this weapon.

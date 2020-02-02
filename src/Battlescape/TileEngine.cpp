@@ -2888,6 +2888,44 @@ int TileEngine::faceWindow(Position position)
 }
 
 /**
+ * Returns the directional cover value for a given block and direction.
+ * @ param position Position of the given block
+ * @ param direction Direction of the cover value to get
+ * @return the cover value
+ */
+int TileEngine :: getDirectionalCoverValue(Position position, int direction){
+	static const Position oneTileEast = Position(1, 0, 0);
+	static const Position oneTileSouth = Position(0, 1, 0);
+	valueAt = [](Position pos, TilePart wall){ 
+		MapData m = save->getTile(pos)->getMapData(wall);
+		return m ? m->getCoverValue() : 0;
+	} 
+	switch(direction){ 
+		case 0:
+			return valueAt(position, O_NORTHWALL);
+		case 2:
+			return valueAt(position + oneTileEast, O_WESTWALL);
+		case 4:
+			return valueAt(position + oneTileSouth, O_NORTHWALL);
+		case 6:
+			return valueAt(position, O_WESTWALL);
+		default:
+			throw Exception("%i is not a valid direction for getDirectionalCoverValue()", direction);
+	}
+}
+/**
+ * Get the direction for the given position relative to (0, 0).
+ * @ param relative The relative position
+ * @ returns The direction (2, 4, 6, or 8)
+ */
+int TileEngine :: getRelativeDirection(Position relative){
+  return abs(relative.y) > abs(relative.x) ?
+              relative.y < 0 ? 0 : 4
+              :
+              relative.x < 0 ? 2 : 6;
+}
+
+/**
  * Validates a throw action.
  * @param action The action to validate.
  * @param originVoxel The origin point of the action.

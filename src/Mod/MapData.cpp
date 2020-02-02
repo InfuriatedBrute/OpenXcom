@@ -179,6 +179,15 @@ int MapData::getBlock(ItemDamageType type) const
 }
 
 /**
+ * Gets the cover value of this block.
+ * @return The cover value (0-100)
+ */
+int MapData::getCoverValue() const
+{
+	return std::min(_block[0], 100);
+}
+
+/**
  * Sets the amount of blockage for all types.
  * @param lightBlock The light blockage.
  * @param visionBlock The vision blockage.
@@ -189,7 +198,7 @@ int MapData::getBlock(ItemDamageType type) const
  */
 void MapData::setBlockValue(int lightBlock, int visionBlock, int HEBlock, int smokeBlock, int fireBlock, int gasBlock)
 {
-	_block[0] = lightBlock; // not used...
+	_block[0] = lightBlock; // not used in vanilla
 	_block[1] = visionBlock==1?255:0;
 	_block[2] = HEBlock;
 	_block[3] = smokeBlock==1?256:0;

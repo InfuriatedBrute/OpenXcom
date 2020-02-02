@@ -69,6 +69,7 @@ private:
 	SpecialAbility _specab;
 	std::string _spawnUnit;
 	bool _livingWeapon;
+  bool _takesCover;
 	std::string _meleeWeapon, _psiWeapon;
 	std::vector<std::vector<std::string> > _builtInWeapons;
 	bool _capturable;
@@ -115,6 +116,8 @@ public:
 	int getEnergyRecovery() const;
 	/// Checks if this unit has a built in weapon.
 	bool isLivingWeapon() const;
+  /// Checks if the unit is able to take cover
+  bool takesCover() const;
 	/// Gets the name of any melee weapon that may be built in to this unit.
 	std::string getMeleeWeapon() const;
 	/// Gets the name of any psi weapon that may be built in to this unit.

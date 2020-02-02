@@ -27,7 +27,7 @@ namespace OpenXcom
  * Creates a certain type of unit.
  * @param type String defining the type.
  */
-Unit::Unit(const std::string &type) : _type(type), _standHeight(0), _kneelHeight(0), _floatHeight(0), _value(0), _aggroSound(-1), _moveSound(-1), _intelligence(0), _aggression(0), _energyRecovery(30), _specab(SPECAB_NONE), _livingWeapon(false), _psiWeapon("ALIEN_PSI_WEAPON"), _capturable(true)
+Unit::Unit(const std::string &type) : _type(type), _standHeight(0), _kneelHeight(0), _floatHeight(0), _value(0), _aggroSound(-1), _moveSound(-1), _intelligence(0), _aggression(0), _energyRecovery(30), _specab(SPECAB_NONE), _livingWeapon(false), _takesCover(false), _psiWeapon("ALIEN_PSI_WEAPON"), _capturable(true)
 {
 }
 
@@ -65,6 +65,7 @@ void Unit::load(const YAML::Node &node, Mod *mod)
 	_specab = (SpecialAbility)node["specab"].as<int>(_specab);
 	_spawnUnit = node["spawnUnit"].as<std::string>(_spawnUnit);
 	_livingWeapon = node["livingWeapon"].as<bool>(_livingWeapon);
+  _takesCover = node["takesCover"].as<bool>(_takesCover);
 	_meleeWeapon = node["meleeWeapon"].as<std::string>(_meleeWeapon);
 	_psiWeapon = node["psiWeapon"].as<std::string>(_psiWeapon);
 	_capturable = node["capturable"].as<bool>(_capturable);
@@ -73,6 +74,7 @@ void Unit::load(const YAML::Node &node, Mod *mod)
 	{
 		_builtInWeapons.push_back(node["builtInWeapons"].as<std::vector<std::string> >());
 	}
+
 	mod->loadSoundOffset(_type, _deathSound, node["deathSound"], "BATTLE.CAT");
 	mod->loadSoundOffset(_type, _aggroSound, node["aggroSound"], "BATTLE.CAT");
 	mod->loadSoundOffset(_type, _moveSound, node["moveSound"], "BATTLE.CAT");
@@ -241,6 +243,15 @@ int Unit::getEnergyRecovery() const
 bool Unit::isLivingWeapon() const
 {
 	return _livingWeapon;
+}
+
+/**
+ * Returns whether this unit can use light cover.
+ * @return True if it can use light cover.
+ */
+bool Unit::takesCover() const
+{
+	return _takesCover;
 }
 
 /**

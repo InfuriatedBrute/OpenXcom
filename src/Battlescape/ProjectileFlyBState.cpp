@@ -567,6 +567,19 @@ void ProjectileFlyBState::think()
 
 				if (_projectileImpact != V_OUTOFBOUNDS)
 				{
+          //checks if hits cover instead
+          bool cover1 = !_action.weapon->getRules()->ignoresCover();
+          bool cover2 = _parent->getSave()->getTile(pos / Position(16,16,24))->getUnit()->getRules()->takesCover();
+          if (_projectileImpact == V_UNIT && _action.weapon && cover1 && cover2){
+            Position *p = _parent->getMap()->getProjectile()->getPosition(offset);
+            int dir = _parent->getTileEngine->getRelativeDirection(_actor->getPosition(offset) - p);
+            if(rand()*100 > getDirectionalCoverValue(p, dir)){ //hits cover instead
+              _projectile_impact = (dir == 2 || dir == 4) ? V_NORTHWALL : V_WESTWALL;
+              if(dir == 2) p.x++; 
+              if(dir == 4) p.y++;  
+              _parent->getMap()->getProjectile()->setPosition(p)
+            }
+          }
 					int offset = 0;
 					// explosions impact not inside the voxel but two steps back (projectiles generally move 2 voxels at a time)
 					if (_ammo && _ammo->getRules()->getExplosionRadius() != 0 && _projectileImpact != V_UNIT)
